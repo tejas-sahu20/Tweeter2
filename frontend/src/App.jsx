@@ -1,48 +1,50 @@
-import react from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import Login from "./pages/Login"
-import Home from './pages/Home'
-import Register from './pages/Register'
-import NotFound from './pages/NotFound'
-import ProtectedRoute from './components/ProtectedRoute'
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Home from './pages/Home';
+import Register from './pages/Register';
+import NotFound from './pages/NotFound';
+import ProtectedRoute from './components/ProtectedRoute';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CreateTweet from './components/CreateTweet';
 
-function Logout(){
-  localStorage.clear()
-  return <Navigate to="/login"/>
-}
-
-function ReturnAndLogout(){
+function Logout() {
   localStorage.clear();
-  return <Register/>
+  return <Navigate to="/login" />;
 }
+
+function ReturnAndLogout() {
+  localStorage.clear();
+  return <Register />;
+}
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 function App() {
   return (
-    <div>
-    {/* he he */}
-    <BrowserRouter>
-    <Routes>
-    <Route path="/"
-    element={
-      <ProtectedRoute>
-      <Home/>
-        </ProtectedRoute>
-      }
-      />
-      <Route
-      path='/login' element={<Login/>}
-      />
-      <Route
-      path='/Register' element={<Register/>}
-      />
-      <Route
-      path='*' element={<NotFound/>}
-      />
-    </Routes>
-    </BrowserRouter>
-      
-    </div>
-  )
+    <ThemeProvider theme={darkTheme}>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='/createTweet' element={<CreateTweet />} />
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;

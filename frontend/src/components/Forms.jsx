@@ -1,55 +1,113 @@
-import {useState} from 'react'
-import api from '../api'
-import { useNavigate } from 'react-router-dom'
-import { ACCESS_TOKEN,REFRESH_TOKEN } from '../constants'
-import "../styles/Form.css"
-function Forms({route,method}){
-    const [username,setUsername]=useState("")
-    const [password,setPassword]=useState("")
-    const [loading,setLoading]=useState("")
-    const navigate=useNavigate()
-    console.log(route);
-    const handleSubmit=async (e)=>{
-        setLoading(true)
-        e.preventDefault()
-        try{
-            console.log("here")
-            console.log({username,password})
-            const res=await api.post(route,{username,password})
-            if(method=="login")
-            {
-                localStorage.setItem(ACCESS_TOKEN,res.data.access)
-                localStorage.setItem(REFRESH_TOKEN,res.data.refresh)
-                navigate("/")
-            }
-            else{
-                navigate("/login")
-            }
-        }
-        catch(error){
-            alert(error)
-        }finally{
-            setLoading(false)
+import React, { useState} from 'react';
+import {useNavigate} from 'react-router-dom'
+import {
+    Avatar,
+    Button,
+    CssBaseline,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Link,
+    Grid,
+    Box,
+    Typography,
+    Container,
+} from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import api from "../api"
+const theme = createTheme();
+
+const LoginForm = ({route}) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate=useNavigate();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await api.post('getToken/', { username, password });
+            console.log(response.data);
+            navigate('/home')
+            // Handle successful login here (e.g., save token, redirect)
+        } catch (error) {
+            console.error(error);
+            // Handle login error here
         }
     };
-    const name=method=="login"?"login":"register"
-    return<form onSubmit={handleSubmit} className='form-container'>
-        <h3>{name}</h3>
-    <input
-        className="form-input"
-        value={username}
-        onChange={(e)=>setUsername(e.target.value)}
-        placeholder='Username'
-    />
-    <input
-        className="form-input"
-        value={password}
-        onChange={(e)=>setPassword(e.target.value)}
-        placeholder='Password'
-    />
-    <button className='form-button' type='submit'>
-        {name}
-    </button>
-    </form>
-}
-export default Forms;
+
+    return (
+        // <ThemeProvider theme={theme}>
+            <Container component="main" maxWidth="xs">
+                <CssBaseline />
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Sign in
+                    </Typography>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
+                            autoFocus
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <FormControlLabel
+                            control={<Checkbox value="remember" color="primary" />}
+                            label="Remember me"
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Sign In
+                        </Button>
+                        <Grid container>
+                            <Grid item xs>
+                                <Link href="#" variant="body2">
+                                    Forgot password?
+                                </Link>
+                            </Grid>
+                            <Grid item>
+                                <Link href="#" variant="body2">
+                                    {"Don't have an account? Sign Up"}
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Box>
+            </Container>
+        // </ThemeProvider>
+    );
+};
+
+export default LoginForm;

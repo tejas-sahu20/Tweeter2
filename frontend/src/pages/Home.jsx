@@ -1,4 +1,42 @@
-const Home=()=>{
-    return(<>This is Home Page</>);
-}
+import React, { useEffect, useState } from 'react';
+import { Box, Grid, Container, Typography,CssBaseline } from '@mui/material';
+import TweetCard from '../components/TweetCard';
+import api from '../api';
+
+const Home = () => {
+  const [tweets, setTweets] = useState([]);
+
+  const getAllTweets = async () => {
+    try {
+      const response = await api.get('/api/tweets/');
+      setTweets(response.data);
+      console.log(response.data[0])
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllTweets();
+  }, []);
+
+  return (
+    <Box sx={{ flexGrow: 1, mt: 4, mb: 4 }}>
+        <CssBaseline/>
+      <Container maxWidth="lg">
+        <Typography variant="h4" color="primary" gutterBottom>
+          Tweets
+        </Typography>
+        <Grid container spacing={4}>
+          {tweets.map(tweet => (
+            <Grid item key={tweet.id} xs={12} sm={6} md={4}>
+              <TweetCard tweet={tweet} />
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
+
 export default Home;

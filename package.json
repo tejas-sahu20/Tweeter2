@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@mui/icons-material": "^5.16.4",
+    "@mui/material": "^5.16.4",
     "axios": "^1.7.2",
     "jwt-decode": "^4.0.0",
     "react-router-dom": "^6.25.1"
