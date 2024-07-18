@@ -7,6 +7,7 @@ import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CreateTweet from './components/CreateTweet';
+import {CssBaseline} from '@mui/material'
 
 function Logout() {
   localStorage.clear();
@@ -27,6 +28,7 @@ const darkTheme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={darkTheme}>
+      <CssBaseline></CssBaseline>
       <BrowserRouter>
         <Routes>
           <Route

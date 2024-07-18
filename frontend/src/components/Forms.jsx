@@ -22,6 +22,7 @@ const theme = createTheme();
 const LoginForm = ({route}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isError,setIsError]=useState(false);
     const navigate=useNavigate();
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -31,6 +32,7 @@ const LoginForm = ({route}) => {
             navigate('/home')
             // Handle successful login here (e.g., save token, redirect)
         } catch (error) {
+            setIsError(true)
             console.error(error);
             // Handle login error here
         }
@@ -82,13 +84,18 @@ const LoginForm = ({route}) => {
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="Remember me"
-                        />
+                            />
+                            {isError && (
+                          <Typography variant="body2" sx={{ color: 'red', mt: 1 }}>
+                            There is some error. Check login password.
+                          </Typography>
+                        )}
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                        >
+                            >
                             Sign In
                         </Button>
                         <Grid container>
@@ -105,6 +112,7 @@ const LoginForm = ({route}) => {
                         </Grid>
                     </Box>
                 </Box>
+
             </Container>
         // </ThemeProvider>
     );
