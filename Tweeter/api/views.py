@@ -4,7 +4,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import PermissionDenied
 from .models import Tweet, Comment
 from .serializers import UserSerializer, TweetSerializer, CommentSerializer
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -108,3 +110,24 @@ class DeleteTweetView(generics.DestroyAPIView):
         # if instance.author != self.request.user:
         #     raise PermissionDenied("You do not have permission to delete this tweet.")
         instance.delete()
+
+class ShowDeleteButton(APIView):
+    queryset = Tweet.objects.all()
+    serializer_class = TweetSerializer
+
+    def get(self, request):
+        try:
+            tweet_id = request.query_params.get('id')
+            if tweet_id is None:
+                return Response({"error": "No tweet ID provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+            tweet = Tweet.objects.get(id=tweet_id)
+            print(tweet.author.id,request.user.id,tweet_id,tweet.id)
+            if tweet.author.id == request.user.id:
+                return Response({"show": 1}, status=status.HTTP_200_OK)
+            else:
+                return Response({"show": 0}, status=status.HTTP_200_OK)
+        except Tweet.DoesNotExist:
+            return Response({"error": "Tweet not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

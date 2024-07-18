@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { Box, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import api from '../api';
 
 const TweetCard = ({ tweet ,onDelete}) => {
-  const [expanded, setExpanded] = useState(false);
-
+    const [expanded, setExpanded] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+  
   const toggleAccordion = () => {
     setExpanded(!expanded);
   };
@@ -18,8 +19,22 @@ const TweetCard = ({ tweet ,onDelete}) => {
     } catch (error) {
       console.log('Error deleting tweet:', error);
     }
-  }
-
+  } 
+const showDeleteCall = async () => {
+    try {
+      const resp = await api.get(`api/tweets/showDeleteButton?id=${tweet.id}`);
+      console.log(tweet.id)
+      console.log(resp.data.show)
+      setShowDelete(resp.data.show === 1);
+    } catch (error) {
+      console.log('Error fetching delete button visibility:', error);
+    }
+  };
+  
+  useEffect(() => {
+    showDeleteCall();
+  }, []); // Empty dependency array ensures it runs once on component mount
+  
   return (
     <Box
       sx={{
@@ -61,7 +76,7 @@ const TweetCard = ({ tweet ,onDelete}) => {
             <Typography variant="caption">
               Created at: {new Date(tweet.created_at).toLocaleString()}
             </Typography>
-            <button onClick={() => deleteTheTweet(tweet)}>Delete</button>
+            {showDelete && (<button onClick={() => deleteTheTweet(tweet)}>Delete</button>)}
           </Box>
         </AccordionDetails>
       </Accordion>

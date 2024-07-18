@@ -1,12 +1,9 @@
-import React, { useState} from 'react';
-import {useNavigate} from 'react-router-dom'
+import React, { useState } from 'react';
 import {
     Avatar,
     Button,
     CssBaseline,
     TextField,
-    FormControlLabel,
-    Checkbox,
     Link,
     Grid,
     Box,
@@ -15,31 +12,30 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import axios from 'axios';
-import api from "../api"
-import { ACCESS_TOKEN,REFRESH_TOKEN } from '../constants';
-const theme = createTheme();
+import api from '../api';
+import {useNavigate} from 'react-router-dom'
 
-const LoginForm = ({route}) => {
+const RegisterForm = ({route}) => {
     const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isError,setIsError]=useState(false);
     const navigate=useNavigate();
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await api.post('getToken/', { username, password });
-            localStorage.setItem(ACCESS_TOKEN,response.data.access);
-            localStorage.setItem(REFRESH_TOKEN,response.data.refresh);
-            console.log('it should be stored');
-            console.log(response.data.access);
-            console.log(response.data.refresh);
+            const response = await api.post(route, { 
+                username, 
+                first_name: name, 
+                email, 
+                password 
+            });
+            console.log(response.data);
             navigate('/home')
-            // Handle successful login here (e.g., save token, redirect)
+            // Handle successful registration here (e.g., redirect to login page)
         } catch (error) {
-            setIsError(true)
             console.error(error);
-            // Handle login error here
+            // Handle registration error here
         }
     };
 
@@ -59,7 +55,7 @@ const LoginForm = ({route}) => {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign in
+                        Sign up
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
@@ -78,6 +74,28 @@ const LoginForm = ({route}) => {
                             margin="normal"
                             required
                             fullWidth
+                            id="name"
+                            label="Name"
+                            name="name"
+                            autoComplete="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            name="email"
+                            autoComplete="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
                             name="password"
                             label="Password"
                             type="password"
@@ -86,41 +104,26 @@ const LoginForm = ({route}) => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
-                            />
-                            {isError && (
-                          <Typography variant="body2" sx={{ color: 'red', mt: 1 }}>
-                            There is some error. Check login password.
-                          </Typography>
-                        )}
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                            >
-                            Sign In
+                        >
+                            Sign Up
                         </Button>
-                        <Grid container>
-                            <Grid item xs>
-                                <Link href="#" variant="body2">
-                                    Forgot password?
-                                </Link>
-                            </Grid>
+                        <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2">
-                                    {"Don't have an account? Sign Up"}
+                                <Link href="/login" variant="body2">
+                                    Already have an account? Sign in
                                 </Link>
                             </Grid>
                         </Grid>
                     </Box>
                 </Box>
-
             </Container>
         // </ThemeProvider>
     );
 };
 
-export default LoginForm;
+export default RegisterForm;

@@ -12,6 +12,7 @@ from api.views import (
     CommentUpdateView,
     CommentDeleteView,
     DeleteTweetView,
+    ShowDeleteButton
 )
 
 urlpatterns = [
@@ -21,6 +22,8 @@ urlpatterns = [
     path('tweets/<int:pk>/', GetTweetView.as_view(), name='get_tweet'),
     path('tweets/<int:pk>/update/', TweetUpdateView.as_view(), name='update_tweet'),
     path('tweets/<int:pk>/delete/', DeleteTweetView.as_view(), name='delete_tweet'),
+    path('tweets/<int:pk>/delete/', DeleteTweetView.as_view(), name='delete_tweet'),
+    path('tweets/showDeleteButton',ShowDeleteButton.as_view(),name='show_delete_button'),
 
     # Comment URLs
     path('comments/create/', CommentCreateView.as_view(), name='comment_create'),

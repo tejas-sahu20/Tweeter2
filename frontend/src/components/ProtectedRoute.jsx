@@ -19,6 +19,7 @@ function ProtectedRoute({ children }) {
       });
       if (res.status === 200) {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
+        console.log(res.data.refresh)
         setIsAuthorized(true);
       } else {
         setIsAuthorized(false);
