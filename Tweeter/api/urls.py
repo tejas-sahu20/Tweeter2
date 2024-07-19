@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api.views import (
     UserCreateView,
@@ -12,7 +14,8 @@ from api.views import (
     CommentUpdateView,
     CommentDeleteView,
     DeleteTweetView,
-    ShowDeleteButton
+    ShowDeleteButton,
+    GetUser
 )
 
 urlpatterns = [
@@ -32,4 +35,5 @@ urlpatterns = [
 
     # User Feed URL
     path('user/feed/', UserFeedView.as_view(), name='user_feed'),
-]
+    path('user/username/', GetUser.as_view(), name='user_feed'),
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

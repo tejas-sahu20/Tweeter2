@@ -42,12 +42,10 @@ const Home = () => {
       <Box sx={{ flexGrow: 1, mt: 4, mb: 4 }}>
         <Container maxWidth="lg">
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-            <Button component={RouterLink} to="/createTweet" variant="contained" color="primary">
-              Create Tweet
-            </Button>
+            
           </Box>
           <Typography variant="h4" color="primary" gutterBottom>
-            Tweets
+            Shout
           </Typography>
           <Grid container spacing={4}>
             {tweets.map((tweet) => (
@@ -58,7 +56,7 @@ const Home = () => {
           </Grid>
         </Container>
         {tweetModalToDisplay && (
-          <TweetModal open={modalOpen} handleClose={handleModalClose} tweet={tweetModalToDisplay} />
+          <TweetModal open={modalOpen} handleClose={handleModalClose} tweet={tweetModalToDisplay} newComment={getAllTweets}/>
         )}
       </Box>
     </>

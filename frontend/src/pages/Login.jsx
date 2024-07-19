@@ -1,7 +1,7 @@
 import Forms from "../components/Forms"
 
-function Register(){
-    return <Forms route="/api/token/" method="login"/>
+function Login({setUser}){
+    return <Forms route="getToken/" setUser={setUser} method="login"/>
 }
 
-export default Register;
+export default Login;

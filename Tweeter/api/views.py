@@ -7,6 +7,9 @@ from .serializers import UserSerializer, TweetSerializer, CommentSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
+import uuid
+import os
 
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -14,13 +17,30 @@ class UserCreateView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from django.utils.text import slugify
+from .models import Tweet
+from .serializers import TweetSerializer
+import uuid
+import os
+
 class TweetCreateView(generics.CreateAPIView):
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        # Get the uploaded image file
+        image_file = self.request.FILES.get('image')
+
+        if image_file:
+            # Modify the image name
+            extension = os.path.splitext(image_file.name)[1]  # Get the file extension
+            new_name = f"{uuid.uuid4()}{extension}"  # Create a new unique name
+            image_file.name = new_name
+
+        serializer.save(author=self.request.user, image=image_file)
 
 
 class CommentCreateView(generics.CreateAPIView):
@@ -131,3 +151,8 @@ class ShowDeleteButton(APIView):
             return Response({"error": "Tweet not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class GetUser(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return Response({'username': request.user.username})
+

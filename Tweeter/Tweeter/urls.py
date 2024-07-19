@@ -19,6 +19,8 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api.views import UserCreateView
 from django.urls.conf import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('getToken/',TokenObtainPairView.as_view(),name='token_obtain_pair'),
@@ -28,3 +30,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('api.urls')),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
