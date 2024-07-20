@@ -105,7 +105,7 @@ const ProfilePage = ({ userId }) => {
               >
                 <CommentIcon />
                 <Typography variant="body2" sx={{ cursor: 'pointer', ml: 1 }}>
-                  {tweet.Comments ? tweet.Comments.length : 0}
+                  {tweet.comments ? tweet.comments.length : 0}
                 </Typography>
               </IconButton>
             </Box>

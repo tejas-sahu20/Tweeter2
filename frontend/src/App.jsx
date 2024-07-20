@@ -11,7 +11,6 @@ import {CssBaseline} from '@mui/material'
 import Navbar from './components/Navbar';
 import SearchUser from './pages/SearchUser';
 import api from './api';
-import Logout from './pages/Logout';
 
 import { usernameConst } from './constants';
 import { useState } from 'react';

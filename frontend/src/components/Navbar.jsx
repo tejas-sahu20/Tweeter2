@@ -16,9 +16,11 @@ const Navbar = ({ username }) => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Link to="/home" style={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}>
+        <Typography variant="h6" component="span">
           Shout Phone
         </Typography>
+      </Link>
         <Box sx={{ flexGrow: 1 }} />
         <Typography variant="body1" sx={{ mr: 2 }}>
           Welcome, {username}
