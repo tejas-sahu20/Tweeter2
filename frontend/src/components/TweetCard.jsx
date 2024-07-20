@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Accordion, AccordionSummary, AccordionDetails ,Button} from '@mui/material';
-// import {DeleteIcon} from 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Box, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/icons-material/Delete';
+import CommentIcon from '@mui/icons-material/Comment'; // Import CommentIcon
 import api from '../api';
+import LikeButton from './LikeButton'; // Import the LikeButton component
 
 const TweetCard = ({ tweet, onDelete, onClick }) => {
   const [expanded, setExpanded] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
 
   const toggleAccordion = () => {
     setExpanded(!expanded);
@@ -32,26 +32,35 @@ const TweetCard = ({ tweet, onDelete, onClick }) => {
     }
   };
 
+  const getCommentCount = async () => {
+    try {
+      // const resp = await api.get(`api/tweets/commentsCount?tweet_id=${tweet.id}`);
+      setCommentCount(tweet.comments.length); // Ensure `count` matches your backend response
+    } catch (error) {
+      console.log('Error fetching comment count:', error);
+    }
+  };
+
   useEffect(() => {
     showDeleteCall();
-  }, []);
+    getCommentCount();
+  }, [tweet]);
 
   return (
-    <Box
+     <Box
       sx={{
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         padding: 2,
         borderRadius: 8,
         boxShadow: 2,
         color: 'white',
-        width: '300px', // Set your desired fixed width for the box
-        height: '400px', // Set your desired fixed height for the box
+        width: '300px', 
+        height: '500px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
       }}
-      onClick={() => onClick(tweet)} // Pass the tweet to onClick
     >
       {tweet.image && (
         <Box
@@ -71,37 +80,76 @@ const TweetCard = ({ tweet, onDelete, onClick }) => {
               maxWidth: '100%',
               maxHeight: '100%',
               objectFit: 'contain',
-        cursor: 'pointer',
+              cursor: 'pointer',
             }}
             onClick={() => onClick(tweet)}
           />
         </Box>
       )}
-      
-      <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' ,cursor: 'pointer',}} onClick={() => onClick(tweet)}>
+
+      <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center', cursor: 'pointer' }} onClick={() => onClick(tweet)}>
         {tweet.title}
       </Typography>
-      <Typography variant="body1" sx={{ mb: 1, textAlign: 'center' ,cursor: 'pointer'}} onClick={() => onClick(tweet)}>
-        {tweet.text.substr(0,100)}...
+      <Typography variant="body1" sx={{ mb: 1, textAlign: 'center', cursor: 'pointer' }} onClick={() => onClick(tweet)}>
+        {tweet.text.substr(0, 100)}...
       </Typography>
-      {showDelete && (
-        <IconButton
-          onClick={deleteTheTweet}
-          sx={{
-            color: 'white',
-            backgroundColor: '#d32f2f', // Custom color
-            '&:hover': {
-              backgroundColor: '#b71c1c', // Darker shade on hover
-            },
-            borderRadius: '50%',
-            marginTop: 2,
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      )}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '100%',
+          mt: 2,
+          px: 1, // Add horizontal padding for spacing
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <LikeButton
+            tweetId={tweet.id}
+            initialLikeCount={tweet.Likes ? tweet.Likes.length : 0}
+            initialLiked={tweet.Likes ? tweet.Likes.includes(/* current user id */) : false}
+            onLikeChange={() => {}}
+          />
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <IconButton
+            sx={{
+              color: 'white',
+              backgroundColor: 'transparent',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.2)', // Light hover effect
+              },
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            onClick={() => onClick(tweet)}
+          >
+            <CommentIcon />
+            <Typography variant="body2" sx={{ cursor: 'pointer', ml: 1 }}>
+              {commentCount}
+            </Typography>
+          </IconButton>
+        </Box>
+        {showDelete && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <IconButton
+              onClick={deleteTheTweet}
+              sx={{
+                color: 'white',
+                backgroundColor: '#d32f2f', // Custom color
+                '&:hover': {
+                  backgroundColor: '#b71c1c', // Darker shade on hover
+                },
+                borderRadius: '50%',
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
-}  
+};
 
 export default TweetCard;

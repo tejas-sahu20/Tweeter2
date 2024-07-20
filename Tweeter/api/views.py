@@ -67,6 +67,12 @@ class UserFeedView(generics.ListAPIView):
         user = self.request.user
         return Tweet.objects.filter(author=user)
 
+class GetAllUsers(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
 
 class TweetFeedView(generics.ListAPIView):
     queryset = Tweet.objects.all()
@@ -125,16 +131,11 @@ class DeleteTweetView(generics.DestroyAPIView):
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer
     permission_classes = [IsAuthenticated]
-
     def perform_destroy(self, instance):
-        # if instance.author != self.request.user:
-        #     raise PermissionDenied("You do not have permission to delete this tweet.")
         instance.delete()
-
 class ShowDeleteButton(APIView):
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer
-
     def get(self, request):
         try:
             tweet_id = request.query_params.get('id')
@@ -155,8 +156,6 @@ class GetUser(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         return Response({'username': request.user.username})
-
-
 class GetCommentList(generics.ListAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
@@ -165,8 +164,43 @@ class GetCommentList(generics.ListAPIView):
         tweet_id = self.request.query_params.get('tweet_id')
         print(tweet_id)
         if tweet_id is not None:
-            # print
             f= Comment.objects.filter(tweet_id=tweet_id)
-            print(f)
             return f
-        return Comment.objects.none()  # Return an empty queryset if no tweet_id is provided
+        return Comment.objects.none()
+class ToggleLike(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        user = request.user
+        tweet_id = request.query_params.get('tweet_id')
+        try:
+            tweet = Tweet.objects.get(id=tweet_id)
+            if tweet.Likes.filter(id=user.id).exists():
+                tweet.Likes.remove(user)
+                return Response({'message': 'Like removed'}, status=status.HTTP_200_OK)
+            else:
+                tweet.Likes.add(user)
+                return Response({'message': 'Like added'}, status=status.HTTP_200_OK)
+        except Tweet.DoesNotExist:
+            return Response({'error': 'Tweet not found'}, status=status.HTTP_404_NOT_FOUND)
+    def get(self,request):
+        try:
+            user=request.user
+            tweet_id = request.query_params.get('tweet_id')
+            tweet = Tweet.objects.get(id=tweet_id)
+            if tweet.Likes.filter(id=user.id).exists():
+                return Response({'contains': 1}, status=status.HTTP_200_OK)
+            return Response({'contains': 0}, status=status.HTTP_200_OK)
+        except Tweet.DoesNotExist:
+            return Response({'error': 'Tweet not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class FetchUserDetails(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    def get_object(self):
+        user_id = self.request.user.id
+
+        return self.get_queryset().get(id=user_id)
+
+

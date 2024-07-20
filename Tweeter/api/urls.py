@@ -16,7 +16,10 @@ from api.views import (
     DeleteTweetView,
     ShowDeleteButton,
     GetUser,
-    GetCommentList
+    GetCommentList,
+    ToggleLike,
+    FetchUserDetails,
+    GetAllUsers
 )
 
 urlpatterns = [
@@ -27,15 +30,19 @@ urlpatterns = [
     path('tweets/<int:pk>/update/', TweetUpdateView.as_view(), name='update_tweet'),
     path('tweets/<int:pk>/delete/', DeleteTweetView.as_view(), name='delete_tweet'),
     path('tweets/<int:pk>/delete/', DeleteTweetView.as_view(), name='delete_tweet'),
+    path('tweets/toggleLike',ToggleLike.as_view(),name='toggle_like'),
     path('tweets/showDeleteButton',ShowDeleteButton.as_view(),name='show_delete_button'),
 
     # Comment URLs
     path('comments/create/', CommentCreateView.as_view(), name='comment_create'),
     path('comments/getList', GetCommentList.as_view(), name='get_comment_list'),
+    # path('')
     path('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='update_comment'),
     path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='delete_comment'),
 
     # User Feed URL
     path('user/feed/', UserFeedView.as_view(), name='user_feed'),
     path('user/username/', GetUser.as_view(), name='user_feed'),
+    path('user/fetchUserDetails',FetchUserDetails.as_view(),name='fetch_user'),
+    path('user/getAllUsers',GetAllUsers.as_view(),name='get_all_users'),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

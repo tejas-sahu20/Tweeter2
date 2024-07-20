@@ -10,6 +10,7 @@ class Tweet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tweets')
     image=models.ImageField(upload_to='tweets/',null=True,blank=True)
+    Likes = models.ManyToManyField(User,related_name='likes',blank=True)
 
     def __str__(self):
         return self.title

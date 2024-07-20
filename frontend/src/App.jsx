@@ -9,8 +9,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CreateTweet from './components/CreateTweet';
 import {CssBaseline} from '@mui/material'
 import Navbar from './components/Navbar';
+import SearchUser from './pages/SearchUser';
 import api from './api';
+import Logout from './pages/Logout';
+
+import { usernameConst } from './constants';
 import { useState } from 'react';
+import ProfilePage from './pages/ProfilePage';
 
 function Logout() {
   localStorage.clear();
@@ -33,7 +38,6 @@ function App() {
     try{
       console.log('ran')
       const resp=await api.get('/api/user/username')
-      console.log(resp.data)
       setUsername(resp.data.username);
     }
     catch(error){
@@ -52,12 +56,32 @@ function App() {
             path="/home"
             element={
               <ProtectedRoute>
-                <Navbar username={username}></Navbar>
+              <Navbar username={username}></Navbar>
                 <Home />
+                </ProtectedRoute>
+              }
+              />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Navbar username={username}></Navbar>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+            />
+          <Route
+            path="/searchUsers"
+            element={
+              <ProtectedRoute>
+                <Navbar username={username}></Navbar>
+                <SearchUser />
               </ProtectedRoute>
             }
           />
           <Route path='/login' element={<Login />} setUser={getUserName} />
+          <Route path='/logout' element={<Logout />} />
+          
           <Route path='/register' element={<Register />} />
           <Route path='/createTweet' element={<CreateTweet />} />
           <Route path='*' element={<NotFound />} />
