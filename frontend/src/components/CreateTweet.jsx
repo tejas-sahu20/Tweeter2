@@ -106,7 +106,7 @@ const CreateTweetForm = ({ route }) => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        Create Tweet
+                        Make a Shout
                     </Button>
                 </Box>
             </Box>

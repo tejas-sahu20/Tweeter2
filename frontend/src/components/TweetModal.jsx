@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -8,12 +8,12 @@ import {
   IconButton,
   Box,
   TextField,
-  Button,
   Grid
 } from '@mui/material';
+import {Button} from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import api from '../api';
-
+import { Link as RouterLink } from 'react-router-dom';
 const TweetModal = ({ open, handleClose, tweet }) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState(tweet.comments || []);
@@ -24,7 +24,7 @@ const TweetModal = ({ open, handleClose, tweet }) => {
         text: commentText,
         tweet_id: tweet_id,
       });
-      setComments([...comments, resp.data]);
+      setComments([resp.data,...comments]);
       setComment(''); // Clear the input after submission
     } catch (error) {
       console.log('Error posting comment:', error);
@@ -41,6 +41,19 @@ const TweetModal = ({ open, handleClose, tweet }) => {
     onSubmitComment(tweet.id, comment);
   };
 
+  // const setInitalComments=async()=>{
+  //   try{
+  //     const resp=await api.get(`api/comments/getList?tweet_id=${tweet.id}`)
+  //   console.log(resp.data)
+  //   setComments(resp.data)
+  //   }
+  //   catch(error){
+  //     console.log(error)
+  //   }
+  // }
+  // useEffect(()=>{
+  //   setInitalComments();
+  // },[])
   return (
     <Dialog
       open={open}
@@ -114,7 +127,7 @@ const TweetModal = ({ open, handleClose, tweet }) => {
         </Box>
         <Box mt={4}>
           <Typography variant="h6" gutterBottom>
-            Comments
+            Comments : {comments.length}
           </Typography>
           <Grid container spacing={2}>
             {comments.map((comment) => (
@@ -140,9 +153,6 @@ const TweetModal = ({ open, handleClose, tweet }) => {
         </Box>
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
-        <Button onClick={handleClose} color="primary" variant="contained">
-          Close
-        </Button>
       </DialogActions>
     </Dialog>
   );

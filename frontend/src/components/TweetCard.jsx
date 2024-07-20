@@ -44,43 +44,64 @@ const TweetCard = ({ tweet, onDelete, onClick }) => {
         borderRadius: 8,
         boxShadow: 2,
         color: 'white',
-        cursor: 'pointer',
+        width: '300px', // Set your desired fixed width for the box
+        height: '400px', // Set your desired fixed height for the box
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center',
       }}
       onClick={() => onClick(tweet)} // Pass the tweet to onClick
     >
-        {tweet.image && (
-          <Box mb={2}>
-            <img
-              src={tweet.image}
-              alt={tweet.title}
-              style={{ maxWidth: '100%', maxHeight: '400px', display: 'block', margin: '0 auto' }}
-            />
-          </Box>
-        )}
-      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+      {tweet.image && (
+        <Box
+          mb={2}
+          sx={{
+            width: '100%', // Ensures the Box takes full width
+            height: '200px', // Fixed height for the image container
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <img
+            src={tweet.image}
+            alt={tweet.title}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain',
+        cursor: 'pointer',
+            }}
+            onClick={() => onClick(tweet)}
+          />
+        </Box>
+      )}
+      
+      <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' ,cursor: 'pointer',}} onClick={() => onClick(tweet)}>
         {tweet.title}
       </Typography>
-      <Typography variant="body1" sx={{ mb: 1 }}>
-        {tweet.text}
+      <Typography variant="body1" sx={{ mb: 1, textAlign: 'center' ,cursor: 'pointer'}} onClick={() => onClick(tweet)}>
+        {tweet.text.substr(0,100)}...
       </Typography>
       {showDelete && (
-              <IconButton
-                onClick={deleteTheTweet}
-                sx={{
-                  color: 'white',
-                  backgroundColor: '#d32f2f', // Custom color
-                  '&:hover': {
-                    backgroundColor: '#b71c1c', // Darker shade on hover
-                  },
-                  borderRadius: '50%',
-                  marginTop: 2,
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            )}
+        <IconButton
+          onClick={deleteTheTweet}
+          sx={{
+            color: 'white',
+            backgroundColor: '#d32f2f', // Custom color
+            '&:hover': {
+              backgroundColor: '#b71c1c', // Darker shade on hover
+            },
+            borderRadius: '50%',
+            marginTop: 2,
+          }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      )}
     </Box>
   );
-};
+}  
 
 export default TweetCard;

@@ -156,3 +156,17 @@ class GetUser(APIView):
     def get(self, request):
         return Response({'username': request.user.username})
 
+
+class GetCommentList(generics.ListAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        tweet_id = self.request.query_params.get('tweet_id')
+        print(tweet_id)
+        if tweet_id is not None:
+            # print
+            f= Comment.objects.filter(tweet_id=tweet_id)
+            print(f)
+            return f
+        return Comment.objects.none()  # Return an empty queryset if no tweet_id is provided

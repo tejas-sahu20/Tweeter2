@@ -15,7 +15,8 @@ from api.views import (
     CommentDeleteView,
     DeleteTweetView,
     ShowDeleteButton,
-    GetUser
+    GetUser,
+    GetCommentList
 )
 
 urlpatterns = [
@@ -30,6 +31,7 @@ urlpatterns = [
 
     # Comment URLs
     path('comments/create/', CommentCreateView.as_view(), name='comment_create'),
+    path('comments/getList', GetCommentList.as_view(), name='get_comment_list'),
     path('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='update_comment'),
     path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='delete_comment'),
 
