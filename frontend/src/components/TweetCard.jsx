@@ -1,153 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CommentIcon from '@mui/icons-material/Comment'; // Import CommentIcon
+import React, { useState ,useEffect} from 'react';
+import { Box, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import api from '../api';
-import LikeButton from './LikeButton'; // Import the LikeButton component
 
-const TweetCard = ({ tweet, onDelete, onClick }) => {
-  const [expanded, setExpanded] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [commentCount, setCommentCount] = useState(0);
-
+const TweetCard = ({ tweet ,onDelete}) => {
+    const [expanded, setExpanded] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+  
   const toggleAccordion = () => {
     setExpanded(!expanded);
   };
-
-  const deleteTheTweet = async () => {
+  
+  const deleteTheTweet = async (tweet) => {
     try {
-      await api.delete(`api/tweets/${tweet.id}/delete`);
-      onDelete(tweet.id);
+      const response = await api.delete(`api/tweets/${tweet.id}/delete`);
+      onDelete(tweet.id)
+      // Optionally handle success message or update state after deletion
     } catch (error) {
       console.log('Error deleting tweet:', error);
     }
-  };
-
-  const showDeleteCall = async () => {
+  } 
+const showDeleteCall = async () => {
     try {
-      const resp = await api.get('api/tweets/showDeleteButton', { params: { id: tweet.id } });
+      const resp = await api.get(`api/tweets/showDeleteButton?id=${tweet.id}`);
+      console.log(tweet.id)
+      console.log(resp.data.show)
       setShowDelete(resp.data.show === 1);
     } catch (error) {
       console.log('Error fetching delete button visibility:', error);
     }
   };
-
-  const getCommentCount = async () => {
-    try {
-      // const resp = await api.get(`api/tweets/commentsCount?tweet_id=${tweet.id}`);
-      setCommentCount(tweet.comments.length); // Ensure `count` matches your backend response
-    } catch (error) {
-      console.log('Error fetching comment count:', error);
-    }
-  };
-
+  
   useEffect(() => {
     showDeleteCall();
-    getCommentCount();
-  }, [tweet]);
-
+  }, []); // Empty dependency array ensures it runs once on component mount
+  
   return (
-     <Box
+    <Box
       sx={{
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent white background
         padding: 2,
         borderRadius: 8,
-        boxShadow: 2,
+        boxShadow: 2, // Light shadow
         color: 'white',
-        width: '300px', 
-        height: '500px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center',
       }}
     >
-      {tweet.image && (
-        <Box
-          mb={2}
-          sx={{
-            width: '100%', // Ensures the Box takes full width
-            height: '200px', // Fixed height for the image container
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <img
-            src={tweet.image}
-            alt={tweet.title}
-            style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
-              objectFit: 'contain',
-              cursor: 'pointer',
-            }}
-            onClick={() => onClick(tweet)}
-          />
-        </Box>
-      )}
-
-      <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center', cursor: 'pointer' }} onClick={() => onClick(tweet)}>
+      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
         {tweet.title}
       </Typography>
-      <Typography variant="body1" sx={{ mb: 1, textAlign: 'center', cursor: 'pointer' }} onClick={() => onClick(tweet)}>
-        {tweet.text.substr(0, 100)}...
+      <Typography variant="body1" sx={{ mb: 1 }}>
+        {tweet.text}
       </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          width: '100%',
-          mt: 2,
-          px: 1, // Add horizontal padding for spacing
-        }}
+      <Accordion
+        expanded={expanded}
+        onChange={toggleAccordion}
+        sx={{ backgroundColor: 'transparent', boxShadow: 'none' }} // Remove default background and shadow
       >
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <LikeButton
-            tweetId={tweet.id}
-            initialLikeCount={tweet.Likes ? tweet.Likes.length : 0}
-            initialLiked={tweet.Likes ? tweet.Likes.includes(/* current user id */) : false}
-            onLikeChange={() => {}}
-          />
-        </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <IconButton
-            sx={{
-              color: 'white',
-              backgroundColor: 'transparent',
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.2)', // Light hover effect
-              },
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            onClick={() => onClick(tweet)}
-          >
-            <CommentIcon />
-            <Typography variant="body2" sx={{ cursor: 'pointer', ml: 1 }}>
-              {commentCount}
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="tweet-details-content"
+          id="tweet-details-header"
+          sx={{ minWidth: 'unset', padding: 0 }} // Adjust width and padding of summary
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
+              Click to view details
             </Typography>
-          </IconButton>
-        </Box>
-        {showDelete && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <IconButton
-              onClick={deleteTheTweet}
-              sx={{
-                color: 'white',
-                backgroundColor: '#d32f2f', // Custom color
-                '&:hover': {
-                  backgroundColor: '#b71c1c', // Darker shade on hover
-                },
-                borderRadius: '50%',
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
           </Box>
-        )}
-      </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', padding: 2, borderRadius: 4 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <Typography variant="caption">
+              Author: {tweet.author}
+            </Typography>
+            <Typography variant="caption">
+              Created at: {new Date(tweet.created_at).toLocaleString()}
+            </Typography>
+            {showDelete && (<button onClick={() => deleteTheTweet(tweet)}>Delete</button>)}
+          </Box>
+        </AccordionDetails>
+      </Accordion>
     </Box>
   );
 };

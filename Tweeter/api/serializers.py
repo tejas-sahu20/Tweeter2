@@ -5,7 +5,7 @@ from .models import Tweet, Comment
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)  # Display username instead of user id
-    tweet = serializers.PrimaryKeyRelatedField(read_only=True)
+    tweet = serializers.PrimaryKeyRelatedField(read_only=True)  # Display tweet id instead of tweet details
 
     class Meta:
         model = Comment
@@ -18,7 +18,7 @@ class TweetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tweet
-        fields = ['id', 'title', 'text', 'created_at', 'author', 'comments','image','Likes']
+        fields = ['id', 'title', 'text', 'created_at', 'author', 'comments']
 
 
 class UserSerializer(serializers.ModelSerializer):

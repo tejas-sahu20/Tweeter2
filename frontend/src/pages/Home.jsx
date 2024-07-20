@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Container, Typography, Fab } from '@mui/material';
+import { Box, Grid, Container, Typography, Button } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import TweetCard from '../components/TweetCard';
 import api from '../api';
 import TweetModal from '../components/TweetModal';
-import { Link as RouterLink } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add'; // Import the AddIcon
 
 const Home = () => {
   const [tweets, setTweets] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [tweetModalToDisplay, setTweetModalToDisplay] = useState(null);
+  const [tweetModalToDisplay, setTweetModalToDisplay] = useState(null); // Changed to null
 
   const getAllTweets = async () => {
     try {
       const response = await api.get('/api/tweets/');
-      const tweetsWithReversedComments = response.data.map(tweet => ({
-        ...tweet,
-        comments: tweet.comments.slice().reverse() // reverse comments for each tweet
-      }));
-      setTweets(tweetsWithReversedComments.reverse());
+      setTweets(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -34,16 +29,12 @@ const Home = () => {
   };
 
   const handleModalOpen = (tweet) => {
-    setTweetModalToDisplay(null); // Clear the modal data first
-    setTimeout(() => {
-      setTweetModalToDisplay(tweet); // Set the modal data after a brief delay
-      setModalOpen(true);
-    }, 0);
+    setTweetModalToDisplay(tweet); // Pass the tweet directly
+    setModalOpen(true);
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
-    setTweetModalToDisplay(null); // Clear the modal data on close
   };
 
   return (
@@ -51,9 +42,12 @@ const Home = () => {
       <Box sx={{ flexGrow: 1, mt: 4, mb: 4 }}>
         <Container maxWidth="lg">
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+            <Button component={RouterLink} to="/createTweet" variant="contained" color="primary">
+              Create Tweet
+            </Button>
           </Box>
           <Typography variant="h4" color="primary" gutterBottom>
-            Shouts
+            Tweets
           </Typography>
           <Grid container spacing={4}>
             {tweets.map((tweet) => (
@@ -64,27 +58,9 @@ const Home = () => {
           </Grid>
         </Container>
         {tweetModalToDisplay && (
-          <TweetModal
-            open={modalOpen}
-            handleClose={handleModalClose}
-            tweet={tweetModalToDisplay}
-            newComment={getAllTweets}
-          />
+          <TweetModal open={modalOpen} handleClose={handleModalClose} tweet={tweetModalToDisplay} />
         )}
       </Box>
-      <Fab
-        color="primary"
-        aria-label="add"
-        component={RouterLink}
-        to="/createTweet"
-        sx={{
-          position: 'fixed',
-          bottom: 100,
-          right: 200,
-        }}
-      >
-        <AddIcon />
-      </Fab>
     </>
   );
 };
