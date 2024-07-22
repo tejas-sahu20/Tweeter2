@@ -2,7 +2,7 @@ import axios from "axios";
 import { ACCESS_TOKEN } from "./constants";
 
 // Base URL of your API
-const apiUrl = "http://localhost:8000";
+const apiUrl = "https://tejas20.pythonanywhere.com/";
 
 // Create an axios instance
 const api = axios.create({

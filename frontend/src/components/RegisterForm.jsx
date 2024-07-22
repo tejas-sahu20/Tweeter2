@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Avatar,
     Button,
@@ -14,6 +14,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import api from '../api';
 import {useNavigate} from 'react-router-dom'
+import { ACCESS_TOKEN,REFRESH_TOKEN } from '../constants';
 
 const RegisterForm = ({route}) => {
     const [username, setUsername] = useState('');
@@ -38,7 +39,10 @@ const RegisterForm = ({route}) => {
             // Handle registration error here
         }
     };
-
+    useEffect(()=>{
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(REFRESH_TOKEN);
+    },[])
     return (
         // <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">

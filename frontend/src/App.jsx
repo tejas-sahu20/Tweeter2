@@ -1,3 +1,4 @@
+//wow
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
@@ -83,6 +84,7 @@ function App() {
           
           <Route path='/register' element={<Register />} />
           <Route path='/createTweet' element={<CreateTweet />} />
+          <Route path='/' element={<Login />} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </BrowserRouter>
